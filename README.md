@@ -150,6 +150,8 @@ Feel free to contribute by submitting pull requests or reporting issues.
 ## 📞 Support  
 For any issues, open an issue in the repository or reach out via email.
 
+Mail Id: suraj.ankola.1902@gmail.com
+
 ---
 
 This README provides **everything** needed for a seamless setup. Let me know if you want any modifications! 🚀
