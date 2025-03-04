@@ -1,9 +1,6 @@
 import os
 import subprocess
- 
-# Constants
-DOMAIN = "shrihari.zapto.org"
-NGINX_CONFIG_PATH = "/etc/nginx/sites-available/kuma"
+import argparse
  
 def run_command(command, check=True):
     """Run a shell command and handle errors."""
@@ -79,14 +76,16 @@ def install_kuma():
  
     print("✅ PM2 setup completed successfully.")
  
-def setup_nginx():
+def setup_nginx(domain):
     """Configure Nginx for Uptime Kuma."""
+    NGINX_CONFIG_PATH = "/etc/nginx/sites-available/kuma"
+    
     if not os.path.exists(NGINX_CONFIG_PATH):
         print("🔹 Configuring Nginx...")
         nginx_config = f"""
 server {{
     listen 80;
-    server_name {DOMAIN};
+    server_name {domain};
  
     location / {{
         proxy_pass http://localhost:3001;
@@ -108,15 +107,16 @@ server {{
     run_command("sudo systemctl restart nginx")
     run_command("sudo systemctl enable nginx")
  
-def setup_ssl():
+def setup_ssl(domain):
     """Install and configure an SSL certificate using Certbot."""
     print("🔹 Obtaining an SSL certificate for HTTPS...")
+    NGINX_CONFIG_PATH = "/etc/nginx/sites-available/kuma"
  
     # Ensure Certbot is installed
     run_command("sudo apt install -y certbot python3-certbot-nginx")
  
     # Obtain and apply SSL certificate
-    run_command(f"sudo certbot --nginx -d {DOMAIN} --non-interactive --agree-tos -m admin@{DOMAIN}")
+    run_command(f"sudo certbot --nginx -d {domain} --non-interactive --agree-tos -m admin@{domain}")
  
     # Set up auto-renewal
     run_command("echo '0 3 * * * root certbot renew --quiet' | sudo tee /etc/cron.d/certbot-renew")
@@ -125,16 +125,16 @@ def setup_ssl():
     nginx_ssl_config = f"""
 server {{
     listen 80;
-    server_name {DOMAIN};
+    server_name {domain};
     return 301 https://$host$request_uri;
 }}
  
 server {{
     listen 443 ssl;
-    server_name {DOMAIN};
+    server_name {domain};
  
-    ssl_certificate /etc/letsencrypt/live/{DOMAIN}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/{DOMAIN}/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/{domain}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{domain}/privkey.pem;
     include /etc/letsencrypt/options-ssl-nginx.conf;
  
     location / {{
@@ -157,14 +157,33 @@ server {{
  
 def main():
     """Main function to orchestrate the setup."""
+    # Set up argument parser
+    parser = argparse.ArgumentParser(description='Install and configure Uptime Kuma with Nginx and SSL')
+    parser.add_argument('-d', '--domain', type=str, help='Domain name for Uptime Kuma (e.g., monitor.example.com)')
+    
+    # Parse arguments
+    args = parser.parse_args()
+    
+    # If domain is not provided via command line, prompt the user
+    domain = args.domain
+    if not domain:
+        domain = input("Please enter your domain name (e.g., monitor.example.com): ")
+    
+    # Validate domain (basic check)
+    if not domain or "." not in domain:
+        print("❌ Invalid domain. Please provide a valid domain name.")
+        exit(1)
+        
+    print(f"🔹 Setting up Uptime Kuma with domain: {domain}")
+    
     install_packages()
     install_node()
     clone_uptime_kuma()
     install_kuma()
-    setup_nginx()
-    setup_ssl()  # Setup SSL after Nginx is configured
+    setup_nginx(domain)
+    setup_ssl(domain)  # Setup SSL after Nginx is configured
  
-    print("🎉 Uptime Kuma setup with SSL completed successfully!")
+    print(f"🎉 Uptime Kuma setup with SSL completed successfully at https://{domain}!")
  
 if __name__ == "__main__":
     main()
