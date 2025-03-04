@@ -1,4 +1,3 @@
-#!/bin/bash
 
 # Set Variables
 BACKUP_DIR="/home/ubuntu/uptime-kuma-backups"
@@ -24,9 +23,9 @@ fi
 echo "Cleaning up old backups..."
 ls -t "$BACKUP_DIR"/uptime-kuma-backup-*.tar.gz | tail -n +$((MAX_BACKUPS + 1)) | xargs rm -f
 
-# OPTIONAL: Upload to Amazon S3 (Uncomment if needed)
-# S3_BUCKET="s3://your-bucket-name"
-# aws s3 cp "$BACKUP_FILE" "$S3_BUCKET/uptime-kuma-backup-$TIMESTAMP.tar.gz"
+#  Upload to Amazon S3 (Uncomment if needed)
+ S3_BUCKET="s3://uptime-kuma-backups-task"
+ aws s3 cp "$BACKUP_FILE" "$S3_BUCKET/uptime-kuma-backup-$TIMESTAMP.tar.gz"
 
 echo "Backup process completed successfully!"
 
