@@ -136,7 +136,25 @@ sudo systemctl reload nginx
 ```
 
 ---
+### Automated Deployment and Backup Script
 
+This section describes the automated process for setting up a Python environment, running the Python application (`app.py`), and executing the backup (`backup.sh`) using a single script (`deploy.sh`).
+
+#### **Overview**
+The `deploy.sh` script automates the following steps to ensure smooth and efficient deployment:
+1. System update and installation of required Python dependencies (`python3-venv`, `python3-pip`).
+2. Creation and activation of a Python virtual environment.
+3. Installation of AWS CLI within the virtual environment.
+4. Running the Python application (`app.py`) in the background.
+5. Triggering a backup (`backup.sh`) after 5 minutes of running the Python application.
+
+#### **Prerequisites**
+- Ubuntu system with `apt` package manager.
+- Ensure that `app.py` and `backup.sh` are present in the working directory.
+- The script must have executable permissions:
+  ```bash
+  chmod +x deploy.sh
+---
 ## 🏷️ License  
 This project is open-source and available under the **MIT License**.
 
