@@ -155,6 +155,53 @@ The `deploy.sh` script automates the following steps to ensure smooth and effici
   ```bash
   chmod +x deploy.sh
 ---
+### **Automated Backup & Deployment Script**
+
+This script automates the deployment of a Python application (`app.py`), the creation of a backup, and its upload to AWS S3. It also sets up a cron job to automate the backup process.
+
+#### **📝 Script Breakdown**
+
+1. **Step 1: Check if `app.py` is Running**
+   - The script checks if `app.py` is already running.
+   - If not, it starts `app.py` and verifies if it launched successfully.
+
+2. **Step 2: Wait Until `app.py` Has Been Running for 5 Minutes**
+   - Waits until `app.py` runs for at least 5 minutes before proceeding with the next steps.
+
+3. **Step 3: Configure AWS CLI & Create S3 Bucket**
+   - Configures the AWS CLI.
+   - Prompts the user to enter a name for the S3 bucket and checks if it exists.
+   - If the bucket doesn't exist, the script creates it.
+
+4. **Step 4: Uptime Kuma Backup Setup**
+   - Defines backup directories, file naming convention, and retention policy (keeps the last 7 backups).
+   - Creates a timestamped backup of the Uptime Kuma data directory.
+
+5. **Step 5: Perform Backup**
+   - Backs up the Uptime Kuma data directory and stores it in a `.tar.gz` file.
+
+6. **Step 6: Clean Up Old Backups**
+   - Cleans up old backups, keeping only the last 7 backups.
+
+7. **Step 7: Upload to AWS S3**
+   - Uploads the backup to the specified S3 bucket.
+
+8. **Step 8: Automate Backup with Cron**
+   - Sets up a cron job to run the backup script daily at 7 PM if it doesn't already exist.
+
+#### **🚀 Prerequisites**
+
+Before running this script, make sure the following are in place:
+
+- A working Python environment with `app.py` and `backup.sh` in the current directory.
+- AWS CLI is configured with appropriate permissions.
+- The script has executable permissions:
+  
+  ```bash
+  chmod +x backup.sh
+
+
+---
 ## 🏷️ License  
 This project is open-source and available under the **MIT License**.
 
