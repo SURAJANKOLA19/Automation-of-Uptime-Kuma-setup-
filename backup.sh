@@ -70,17 +70,7 @@ done
 
 echo "🔹 Configuring AWS CLI..."
 
-read -p "Enter AWS Access Key ID: " AWS_ACCESS_KEY
-
-read -p "Enter AWS Secret Access Key: " AWS_SECRET_KEY
-
-read -p "Enter AWS Region (e.g., us-east-1): " AWS_REGION
- 
-aws configure set aws_access_key_id "$AWS_ACCESS_KEY"
-
-aws configure set aws_secret_access_key "$AWS_SECRET_KEY"
-
-aws configure set region "$AWS_REGION"
+aws s3 ls 
  
 echo "✅ AWS CLI configured successfully!"
  
